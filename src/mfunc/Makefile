@@ -5,20 +5,20 @@
 
 # =============================================================================
 # The compiler(s)
-F90 = ifort
+F90 = gfortran
 F2PY = f2py
 # =============================================================================
 # =============================================================================
 # Flags
-F90FLAGS += -FR -fPIC
-F90OPT += -ipo -O3 -unroll -inline
-F90ARCH += -m64
+# F90FLAGS += -FR -fPIC
+# F90OPT += -ipo -O3 -unroll -inline
+# F90ARCH += -m64
 # -ipo      : Interprocedural optimization - for code with more than one file
 # -O3       : Optimize for maximum speed, may take longer to compile
 # -unroll   : Unroll loops - this removes some overhead associated with looping
 # -inline   : Places functions inside main programs
 # -FR       : Free format
-F2PYFLAGS += --fcompiler=intelem --f90flags='${F90FLAGS}' --arch='${F90ARCH}' \
+F2PYFLAGS += --fcompiler=gfortran --f90flags='${F90FLAGS}' --arch='${F90ARCH}' \
              --opt='${F90OPT}'
 # --fcompiler=intelem : Use intel's compiler
 #  f2py --fcompiler=intelem --f90flags=' -FR -fPIC'  --arch='-m64' --opt='-ipo -O3 -unroll -inline'
@@ -26,8 +26,8 @@ F2PYFLAGS += --fcompiler=intelem --f90flags='${F90FLAGS}' --arch='${F90ARCH}' \
 # Libraries
 # MKLROOT = /usr/global/intel/Compiler/2011.11/339/mkl
 #MKL = -L$(MKLROOT)/lib/intel64/ -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lpthread -lm
-MKL = -L$(MKLROOT)/lib/intel64/ -lmkl_rt -lpthread -lm
-INC += -I$(CURDIR) -I$(MKLROOT)/include
+# MKL = -L$(MKLROOT)/lib/intel64/ -lmkl_rt -lpthread -lm
+# INC += -I$(CURDIR) -I$(MKLROOT)/include
 # =============================================================================
 
 # =============================================================================
@@ -42,15 +42,15 @@ all: erf mvmult
 mvmult: mvmult.so
 
 mvmult.so: mvmult.f90 constants.mod
-	${F2PY} ${F2PYFLAGS} ${INC} ${MKL} -m mvmult -c mvmult.f90
+	${F2PY} ${F2PYFLAGS} -lblas -m mvmult -c mvmult.f90
 
 erf: erf.so
 
 erf.so: erf.f90 constants.mod
-	${F2PY} ${F2PYFLAGS} ${INC} ${MKL} -m erf -c erf.f90
+	${F2PY} ${F2PYFLAGS} -lblas -m erf -c erf.f90
 
 constants.mod: Constants.f90
-	${F90} ${F90FLAGS} ${INC} ${MKL} -c Constants.f90
+	${F90} ${F90FLAGS} -lblas -c Constants.f90
 
 # =============================================================================
 # Special rules

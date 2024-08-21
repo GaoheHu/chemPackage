@@ -4,13 +4,13 @@
 
 # =============================================================================
 # The compiler(s)
-F90  = ifort
+F90  = gfortran
 
 # Release 
 F2PY = f2py
-F90FLAGS = -FR -fPIC -heap-arrays -qopenmp -threads -lifcore -diag-disable=10448 -nofor-main
-F90OPT   = -ipo -O3 -unroll -inline
-F90ARCH  = -m64
+# F90FLAGS = -FR -fPIC -heap-arrays -qopenmp -threads -lifcore -diag-disable=10448 -nofor-main
+# F90OPT   = -ipo -O3 -unroll -inline
+# F90ARCH  = -m64
 # -ipo      : Interprocedural optimization - for code with more than one file
 # -O3       : Optimize for maximum speed, may take longer to compile
 # -unroll   : Unroll loops - this removes some overhead associated with looping
@@ -24,14 +24,14 @@ F90ARCH  = -m64
 #F90ARCH  = -m64
 
 
-F2PYFLAGS = --fcompiler=intelem --f90flags='${F90FLAGS}' --f77flags='${F90FLAGS}' --arch='${F90ARCH}' \
+F2PYFLAGS = --fcompiler=gfortran --f90flags='${F90FLAGS}' --f77flags='${F90FLAGS}' --arch='${F90ARCH}' \
              --opt='${F90OPT}' 
 # --fcompiler=intelem : Use intel's compiler
 
 # =============================================================================
 # Libraries
-MKL = -L$(MKLROOT)/lib/intel64 -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm
-INC += -I$(CURDIR) -I$(MKLROOT)/include
+# MKL = -L$(MKLROOT)/lib/intel64 -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm
+# INC += -I$(CURDIR) -I$(MKLROOT)/include
 # =============================================================================
 
 # =============================================================================
@@ -45,27 +45,27 @@ coordinate_functions: coordinate_functions.so
 
 coordinate_functions.so: calc_bonds.f90 calc_dist.f90 minmax_dist.f90 \
                          translate.f90 rotate.f90 constants.mod 
-	${F2PY} ${F2PYFLAGS} ${INC} ${MKL} -m coordinate_functions \
+	${F2PY} ${F2PYFLAGS} -lblas  -m coordinate_functions \
             -c calc_bonds.f90 calc_dist.f90 \
                minmax_dist.f90 translate.f90 rotate.f90
 
 tests: tests.so
 
 tests.so: find_equal.f90 constants.mod
-	${F2PY} ${F2PYFLAGS} ${INC} ${MKL} -m tests -c find_equal.f90
+	${F2PY} ${F2PYFLAGS} -lblas -m tests -c find_equal.f90
 
 drawingMath: drawingMath.so
 
 drawingMath.so: drawingMath.f90 tensors.f90 constants.mod 
-	${F2PY} ${F2PYFLAGS} ${INC} ${MKL} -m drawingMath -c drawingMath.f90 tensors.f90
+	${F2PY} ${F2PYFLAGS} -lblas -m drawingMath -c drawingMath.f90 tensors.f90
 
 tensors: tensors.so
 
 tensors.so: tensors.f90 constants.mod
-	${F2PY} ${F2PYFLAGS} ${INC} ${MKL} -m tensors -c tensors.f90
+	${F2PY} ${F2PYFLAGS} -lblas  -m tensors -c tensors.f90
 
 constants.mod: Constants.f90
-	${F90} ${F90FLAGS} ${INC} ${MKL} -c Constants.f90
+	${F90} ${F90FLAGS}-lblas -c Constants.f90
 
 
 # =============================================================================
