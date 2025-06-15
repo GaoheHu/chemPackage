@@ -29,6 +29,10 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install BLAS
+      run: sudo apt-get update && sudo apt-get install -y libblas-dev liblapack-dev
+    - name: Install package
+      run: |
         pip install .
 #    - name: Lint with flake8
 #      run: |
