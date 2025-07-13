@@ -16,7 +16,6 @@ __all__ = [
            'file_safety_check',
            'range_check',
            'compile_target',
-           'compile_on_fly',
           ]
 
 def range_check(low, high, expand=False, asint=False):

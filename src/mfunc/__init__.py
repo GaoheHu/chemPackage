@@ -1,17 +1,7 @@
 from mfunc.conversions import *
 from mfunc.fit import *
-try:
-    from mfunc.functions import *
-except ImportError:
-    from prep import compile_on_fly
-    compile_on_fly('mfunc', 'mvmult')
-    from mfunc.functions import *
-try:
-    from mfunc.erf import error_function as erf
-except ImportError:
-    from prep import compile_on_fly
-    compile_on_fly('mfunc', 'erf')
-    from mfunc.erf import error_function as erf
+from mfunc.functions import *
+from mfunc.erf import error_function as erf
 
 __all__ = [ 
            'fit_func',
